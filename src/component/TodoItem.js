@@ -24,6 +24,22 @@ class TodoItem extends Component{
     }
 
     /**
+     * 切换选中状态
+     */
+    toggleChk(e){
+        let chk = e.target.checked;
+        let id = parseInt(e.target.id);
+        let arr = this.state.data;
+        arr.forEach((item,index)=>{
+            if(index==id){
+                item.completed = chk;
+            }
+        });
+        this.setState({
+            data:arr
+        });
+    }
+    /**
      * 处理数据总线上的事件
      */
     componentDidMount(){
@@ -51,7 +67,13 @@ class TodoItem extends Component{
         let list = this.state.data.map((item,index)=>
             <li key={index} className={item.completed==true || this.state.flag?"completed":""}>
                 <div className="view">
-                    <input className="toggle" type="checkbox" checked="" />
+                    <input
+                        className="toggle"
+                        type="checkbox"
+                        checked={item.completed}
+                        id = {index}
+                        onClick={(e)=>this.toggleChk(e)}
+                    />
                     <label>{item.title}</label>
                     <button className="destroy"></button>
                 </div>
