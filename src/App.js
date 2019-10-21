@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import Header from './component/Header';
+import TodoList from './component/TodoList';
+import Footer from './component/Footer';
+import './index.css';
+const EventEmitter = require('events').EventEmitter;
+class App extends Component {
+    constructor(props){
+        super(props);
+        this.eventEmitter = new EventEmitter();
+    }
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    render() {
+        return (
+            <div>
+                <section className="todoapp">
+                    <Header eventEmitter = {this.eventEmitter}  />
+                    <TodoList eventEmitter = {this.eventEmitter}></TodoList>
+                    <Footer eventEmitter = {this.eventEmitter} />
+                </section>
+            </div>
+        );
+    }
 }
-
 export default App;
