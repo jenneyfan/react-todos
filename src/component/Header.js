@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-
+import eventEmitter from './eventEmitter';
 class Header extends Component{
     constructor(props){
         super(props);
@@ -21,7 +21,7 @@ class Header extends Component{
      */
     handleKeyDown(e){
         if(e.keyCode===13){
-            this.props.eventEmitter.emit('addTodos',this.state);
+            eventEmitter.emit('addTodos',this.state);
             e.target.value='';
             this.setState({
                 todoTxt:''

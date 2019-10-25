@@ -1,11 +1,10 @@
 import React,{Component} from 'react';
-import TodoData from '../api/todoData';
+import eventEmitter from './eventEmitter';
 class TodoItem extends Component{
     constructor(props){
         super(props);
         this.state = {
-            data:TodoData.todos,
-            flag:null
+            data:this.props.data
         }
     }
 
@@ -31,26 +30,26 @@ class TodoItem extends Component{
         let id = parseInt(e.target.id);
         let arr = this.state.data;
         arr.forEach((item,index)=>{
-            if(index==id){
+            if(index===id){
                 item.completed = chk;
             }
         });
         this.setState({
             data:arr
         });
+        eventEmitter.emit('leftTodos', this.state.data);
     }
     /**
      * 处理数据总线上的事件
      */
     componentDidMount(){
         // 添加数据
-        this.props.eventEmitter.on('addTodos', (obj) =>{
-            this.addTodoData(obj.todoTxt)
-            console.log(obj,this.state);
+        eventEmitter.on('addTodos', (obj) =>{
+            this.addTodoData(obj.todoTxt);
         });
 
         //全选
-        this.props.eventEmitter.on('checkAll',(flag)=>{
+        eventEmitter.on('checkAll',(flag)=>{
             let arr = this.state.data;
             arr.forEach((item)=>{
                 item.completed = flag;
@@ -59,25 +58,25 @@ class TodoItem extends Component{
                 flag:flag,
                 data:arr
             });
-            console.log(this.state);
+            eventEmitter.emit('leftTodos', this.state.data);
         });
     }
 
     render(){
         let list = this.state.data.map((item,index)=>
-            <li key={index} className={item.completed==true || this.state.flag?"completed":""}>
+            <li key={index} className={item.completed===true?"completed":""}>
                 <div className="view">
                     <input
                         className="toggle"
                         type="checkbox"
                         checked={item.completed}
                         id = {index}
-                        onClick={(e)=>this.toggleChk(e)}
+                        onChange={(e)=>this.toggleChk(e)}
                     />
                     <label>{item.title}</label>
                     <button className="destroy"></button>
                 </div>
-                <input className="edit" value="{item.title}"/>
+                <input className="edit" defaultValue="{item.title}" />
             </li>
         );
         return(

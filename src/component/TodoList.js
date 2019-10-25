@@ -1,9 +1,12 @@
 import React,{Component} from 'react';
 import TodoItem from './TodoItem';
+import TodoData from '../api/todoData';
+import eventEmitter from './eventEmitter';
 class TodoList extends Component{
     constructor(props){
         super(props);
         this.state={
+            data:TodoData.todos,
             checkAll:false
         }
     }
@@ -16,15 +19,23 @@ class TodoList extends Component{
         this.setState({
             checkAll:flag
         });
-        this.props.eventEmitter.emit('checkAll',flag);
+        eventEmitter.emit('checkAll',flag);
+    }
+
+    componentDidMount(){
+        eventEmitter.emit('leftTodos',this.state.data);
     }
 
     render(){
         return(
             <section className="main">
                 <input id="toggle-all" className="toggle-all" type="checkbox" onClick={()=>this.handleClick()} />
-                <label for="toggle-all"></label>
-                <TodoItem eventEmitter={this.props.eventEmitter}></TodoItem>
+                <label htmlFor="toggle-all"></label>
+                <TodoItem
+                    data={this.state.data}
+                    eventEmitter={eventEmitter}
+                >
+                </TodoItem>
             </section>
         )
     }
