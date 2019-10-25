@@ -23,6 +23,18 @@ class TodoItem extends Component{
     }
 
     /**
+     * 删除当前数据
+     */
+    destroy(e){
+        let id = e.target.getAttribute('btnid');
+        let arr = this.state.data.filter((item,index)=>index!=id);
+        this.setState({
+            data:arr
+        });
+        eventEmitter.emit('leftTodos', this.state.data);
+    }
+
+    /**
      * 切换选中状态
      */
     toggleChk(e){
@@ -39,11 +51,12 @@ class TodoItem extends Component{
         });
         eventEmitter.emit('leftTodos', this.state.data);
     }
+
     /**
      * 处理数据总线上的事件
      */
     componentDidMount(){
-        // 添加数据
+        // 添加
         eventEmitter.on('addTodos', (obj) =>{
             this.addTodoData(obj.todoTxt);
         });
@@ -60,6 +73,21 @@ class TodoItem extends Component{
             });
             eventEmitter.emit('leftTodos', this.state.data);
         });
+
+        // 过滤
+        eventEmitter.on('filterTodos',(obj)=>{
+            this.setState({
+                data:obj
+            })
+        });
+
+        // 清除已完成
+        eventEmitter.on('clear',(obj)=>{
+            let leftArr = obj.filter(item => item.completed === false);
+            this.setState({
+                data:leftArr
+            })
+        });
     }
 
     render(){
@@ -74,7 +102,10 @@ class TodoItem extends Component{
                         onChange={(e)=>this.toggleChk(e)}
                     />
                     <label>{item.title}</label>
-                    <button className="destroy"></button>
+                    <button
+                        className="destroy"
+                        btnid={index}
+                        onClick={(e)=>this.destroy(e)}></button>
                 </div>
                 <input className="edit" defaultValue="{item.title}" />
             </li>
